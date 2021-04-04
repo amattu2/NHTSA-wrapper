@@ -137,7 +137,7 @@ class NHTSA {
    * @param string make
    * @param string model
    * @return ?array NHTSA raw result
-   * @throws
+   * @throws TypeError
    * @author Alec M. <https://amattu.com>
    * @date 2021-04-04T16:48:24-040
    */
