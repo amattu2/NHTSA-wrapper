@@ -159,6 +159,78 @@ class NHTSA {
   }
 
   /**
+   * Parse a raw recall result
+   *
+   * @param array raw recall result
+   * @return ?array parsed recall result
+   * @throws TypeError
+   * @author Alec M. <https://amattu.com>
+   * @date 2021-04-04T18:16:26-040
+   */
+  public static function parseRecalls(array $recalls = Array()) : ?array
+  {
+    // Checks
+    if (!$recalls || empty($recalls)) {
+      return null;
+    }
+
+    // Variables
+    $parsed_result = Array();
+
+    // Loops
+    foreach ($recalls as $recall) {
+      // Checks
+      if (!$recall["NHTSACampaignNumber"]) {
+        continue;
+      }
+      if (!$recall["ReportReceivedDate"]) {
+        continue;
+      }
+      if (!$recall["Component"] || !is_string($recall["Component"])) {
+        continue;
+      }
+      if (!$recall["Summary"] || !$recall["Remedy"]) {
+        continue;
+      }
+
+      // Variables
+      $parsed_result[] = Array(
+        "Campaign_Number" => $recall["NHTSACampaignNumber"],
+        "Compontent" => explode(":", $recall["Component"]) ?: [],
+        "Date" => self::parse_timestamp($recall["ReportReceivedDate"])->format("Y-m-d"),
+        "Description" => $recall["Summary"] ?: "",
+        "Remedy" => $recall["Remedy"] ?: "",
+      );
+    }
+
+    // Return
+    return $parsed_result;
+  }
+
+  /**
+   * Parse Unix Timestamp (Miliseconds with offset)
+   *
+   * @param string unix timestamp
+   * @return DateTime parsed representation
+   * @throws TypeError
+   * @author Alec M. <https://amattu.com>
+   * @see https://stackoverflow.com/questions/16749778/php-date-format-date1365004652303-0500
+   * @date 2021-04-04T18:04:08-040
+   */
+  private static function parse_timestamp(string $timestamp) : \DateTime
+  {
+    try {
+      // Match Format
+      preg_match('/(\d{10})(\d{3})([\+\-]\d{4})/', $timestamp, $matches);
+
+      // Return
+      return \DateTime::createFromFormat("U.u.O",vsprintf('%2$s.%3$s.%4$s', $matches));
+    } catch (\Exception $e) {
+      return new \DateTime();
+    }
+  }
+
+  /**
    * Perform a HTTP Get request
    *
    * @param string URL
