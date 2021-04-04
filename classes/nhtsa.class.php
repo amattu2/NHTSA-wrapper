@@ -196,7 +196,7 @@ class NHTSA {
       // Variables
       $parsed_result[] = Array(
         "Campaign_Number" => $recall["NHTSACampaignNumber"],
-        "Compontent" => explode(":", $recall["Component"]) ?: [],
+        "Component" => explode(":", $recall["Component"]) ?: [],
         "Date" => self::parse_timestamp($recall["ReportReceivedDate"])->format("Y-m-d"),
         "Description" => $recall["Summary"] ?: "",
         "Remedy" => $recall["Remedy"] ?: "",
