@@ -27,7 +27,7 @@ class NHTSA {
    *
    * @param string vin number
    * @param ?integer model year
-   * @return ?array parsed NHTSA result
+   * @return ?array raw NHTSA result
    * @throws TypeError
    * @author Alec M. <https://amattu.com>
    * @date 2021-04-04T16:19:40-040
@@ -62,27 +62,23 @@ class NHTSA {
   }
 
   /**
-   * Decode a 17-digit VIN and parse result
+   * Parse a raw decode call
+   * Converts a decodeVIN call into a pretty parsed Year, Make, Model, Trim, Engine array
    *
-   * @param string vin number
-   * @param ?integer model year
-   * @return ?array parsed NHTSA Year, Make, Model, Trim, Engine
+   * @param array raw decode result
+   * @return ?array pretty parsed NHTSA result
    * @throws TypeError
    * @author Alec M. <https://amattu.com>
-   * @date 2021-04-04T16:36:29-040
+   * @date 2021-04-04T16:52:15-040
    */
-  public static function prettyDecode(string $vin, int $model_year = 0) : ?array
+  public static function parseDecode(array $result = Array()) : ?array
   {
     // Checks
-    if (!$vin || strlen($vin) != 17) {
-      return null;
-    }
-    if ($model_year && ($model_year < self::$minimum_year || $model_year > (date("Y") + 2))) {
+    if (!$result || empty($result)) {
       return null;
     }
 
-    // Fetch Data
-    $result = self::decodeVIN($vin, $model_year);
+    // Variables
     $parsed_result = Array();
 
     // Parse Year
