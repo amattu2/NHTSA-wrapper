@@ -20,7 +20,7 @@ print_r($recalls);
 echo "</pre>";
 
 // Pretty parse recalls
-echo "<h1>Perform raw recall request</h1>", "<pre>";
+echo "<h1>Pretty parse raw recall request</h1>", "<pre>";
 print_r(amattu\NHTSA::parseRecalls($recalls));
 echo "</pre>";
 ?>
