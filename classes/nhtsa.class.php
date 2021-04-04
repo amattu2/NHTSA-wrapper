@@ -9,10 +9,6 @@
 // Class Namespace
 namespace amattu;
 
-// Exception Classes
-class UnknownHTTPException extends \Exception {}
-class InvalidHTTPResponseException extends \Exception {}
-
 /**
  * A https://vpic.nhtsa.dot.gov/api/ API access class
  */
