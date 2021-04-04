@@ -1,5 +1,5 @@
 # Introduction
-N/A
+This is a simple VIN decoder wrapper for the NHTSA (United States Department of Transportation) VIN decoder API.
 
 # Usage
 N/A
@@ -8,7 +8,4 @@ N/A
 N/A
 
 # Requirements & Dependencies
-N/A
-
-# Previews
-![preview image](https://via.placeholder.com/350x240)
+PHP 7.0 +
