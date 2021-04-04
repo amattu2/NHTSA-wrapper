@@ -105,20 +105,20 @@ Success return result
 Array
 (
   [0] => Array
-    (
-        [Manufacturer] =>
-        [NHTSACampaignNumber] =>
-        [ReportReceivedDate] =>
-        [Component] =>
-        [Summary] =>
-        [Conequence] =>
-        [Remedy] =>
-        [Notes] =>
-        [ModelYear] =>
-        [Make] =>
-        [Model] =>
-    )
+  (
+      [Manufacturer] =>
+      [NHTSACampaignNumber] =>
+      [ReportReceivedDate] =>
+      [Component] =>
+      [Summary] =>
+      [Conequence] =>
+      [Remedy] =>
+      [Notes] =>
+      [ModelYear] =>
+      [Make] =>
+      [Model] =>
   )
+  ...
 )
 ```
 
@@ -159,6 +159,7 @@ Array
     [Description] =>
     [Remedy] =>
   )
+  ...
 )
 ```
 # Notes
