@@ -15,9 +15,12 @@ namespace amattu;
 class NHTSA {
   // Class Variables
   private static $endpoints = Array(
-    "decode" => "https://vpic.nhtsa.dot.gov/api/vehicles/decodevin/%s?format=json%s"
+    "decode" => "https://vpic.nhtsa.dot.gov/api/vehicles/decodevin/%s?format=json%s",
+    "recalls" => "https://one.nhtsa.gov/webapi/api/Recalls/vehicle/modelyear/%d/make/%s/model/%s?format=json"
   );
   private static $minimum_year = 1950;
+  private static $minimum_make_length = 3;
+  private static $minimum_model_length = 3;
 
   /**
    * Decode a 17-digit VIN
@@ -125,6 +128,38 @@ class NHTSA {
 
     // Return
     return !empty($parsed_result) ? $parsed_result : null;
+  }
+
+  /**
+   * Get vehicle recalls by Year, Make, Model
+   *
+   * @param int model year
+   * @param string make
+   * @param string model
+   * @return ?array NHTSA raw result
+   * @throws
+   * @author Alec M. <https://amattu.com>
+   * @date 2021-04-04T16:48:24-040
+   */
+  public static function getRecalls(int $model_year, string $make, string $model) : ?array
+  {
+    // Checks
+    if (!$model_year || $model_year < self::$minimum_year || $model_year > (date("Y") + 2)) {
+      return null;
+    }
+    if (!$make || strlen($make) < self::$minimum_make_length) {
+      return null;
+    }
+    if (!$model || strlen($model) < self::$minimum_model_length) {
+      return null;
+    }
+
+    // Fetch Recalls
+    $endpoint = sprintf(self::$endpoints["recalls"], $model_year, strtoupper($make), strtoupper($model));
+    $result = json_decode(self::http_get($endpoint), true);
+
+    // Return Result
+    return $result["Count"] && $result["Count"] > 0 ? $result["Results"] : null;
   }
 
   /**
