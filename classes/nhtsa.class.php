@@ -58,7 +58,7 @@ class NHTSA {
     }
 
     // Return
-    return $result["Count"] && $result["Count"] > 0 ? $parsed_result : null;
+    return $result["Count"] && $result["Count"] > 0 && !isset($parsed_result["Error Code"]) ? $parsed_result : null;
   }
 
   /**
