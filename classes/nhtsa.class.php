@@ -51,7 +51,8 @@ class NHTSA {
     // Parse Data
     foreach($result["Results"] as $item) {
       // Checks
-      if (!$item['Value']) { continue; }
+      if (!$item['Value'] || !$item['Variable']) { continue; }
+      if ($item['Variable'] === "Error Text") { continue; }
 
       // Variables
       $parsed_result[$item['Variable']] = $item['Value'];
