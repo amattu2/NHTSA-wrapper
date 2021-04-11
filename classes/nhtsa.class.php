@@ -53,6 +53,7 @@ class NHTSA {
       // Checks
       if (!$item['Value'] || !$item['Variable']) { continue; }
       if ($item['Variable'] === "Error Text") { continue; }
+      if ($item['Value'] === "Not Applicable") { continue; }
 
       // Variables
       $parsed_result[$item['Variable']] = $item['Value'];
