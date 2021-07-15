@@ -15,8 +15,8 @@ namespace amattu;
 class NHTSA {
   // Class Variables
   private static $endpoints = Array(
-    "decode" => "https://vpic.nhtsa.dot.gov/api/vehicles/decodevin/%s?format=json%s",
-    "recalls" => "https://one.nhtsa.gov/webapi/api/Recalls/vehicle/modelyear/%d/make/%s/model/%s?format=json"
+    "decode" => "https://vpic.nhtsa.dot.gov/api/vehicles/decodevin/%s?format=json",
+    "recalls" => "https://one.nhtsa.gov/webapi/api/Recalls/vehicle/modelyear/%d/make/%s/model/%s?format=json",
   );
   private static $minimum_year = 1950;
   private static $minimum_make_length = 3;
