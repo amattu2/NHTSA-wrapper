@@ -134,9 +134,9 @@ class NHTSA {
     } else if (isset($result['Displacement (CC)']) && !empty($result['Displacement (CC)'])) {
       $parsed_result['Engine'] .= " (". number_format($result['Displacement (CC)']) ."cc)";
     }
-    if (isset($result["Valve Train Design"]) && !empty($result["Valve Train Design"]) && strtolower($result["Valve Train Design"]) == "dual overhead cam (dohc)") {
+    if (isset($result["Valve Train Design"]) && !empty($result["Valve Train Design"]) && strpos($result["Valve Train Design"], "DOHC") !== false) {
       $parsed_result['Engine'] .= " (DOHC)";
-    } else if (isset($result["Valve Train Design"]) && !empty($result["Valve Train Design"]) && strtolower($result["Valve Train Design"]) == "single overhead cam (sohc)") {
+    } else if (isset($result["Valve Train Design"]) && !empty($result["Valve Train Design"]) && strpos($result["Valve Train Design"], "SOHC") !== false) {
       $parsed_result['Engine'] .= " (SOHC)";
     }
     if (isset($parsed_result['Engine'])) {
