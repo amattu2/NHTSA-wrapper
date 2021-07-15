@@ -104,6 +104,20 @@ class NHTSA {
     if (isset($result['Trim']) && !empty($result['Trim'])) {
       $parsed_result['Trim'] = strtoupper($result['Trim']);
     }
+    if (isset($result["Drive Type"]) && !empty($result["Drive Type"])) {
+      if (strpos($result["Drive Type"], "RWD") !== false) {
+        $parsed_result["Trim"] .= " RWD";
+      } else if (strpos($result["Drive Type"], "FWD") !== false) {
+        $parsed_result["Trim"] .= " FWD";
+      } else if (strpos($result["Drive Type"], "4WD") !== false) {
+        $parsed_result["Trim"] .= " 4WD";
+      } else if (strpos($result["Drive Type"], "AWD") !== false) {
+        $parsed_result["Trim"] .= " AWD";
+      }
+    }
+    if (isset($parsed_result['Trim'])) {
+      $parsed_result['Trim'] = strtoupper(preg_replace('/\s\s+/', ' ', $parsed_result['Trim']));
+    }
 
     // Parse Engine
     if (isset($result['Displacement (L)']) && !empty($result['Displacement (L)'])) {
