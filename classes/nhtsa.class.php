@@ -115,7 +115,7 @@ class NHTSA {
     if (isset($result['Fuel Type - Primary']) && !empty($result['Fuel Type - Primary']) && strtolower($result['Fuel Type - Primary']) == "diesel") {
       $parsed_result['Engine'] .= " (Diesel)";
     }
-    if (isset($result['Engine Model']) && !empty($result['Engine Model'])) {
+    if (isset($result['Engine Model']) && !empty($result['Engine Model']) && strlen($result["Engine Model"]) <= 30) {
       $parsed_result['Engine'] .= " (". $result['Engine Model'] .")";
     } else if (isset($result['Displacement (CC)']) && !empty($result['Displacement (CC)'])) {
       $parsed_result['Engine'] .= " (". number_format($result['Displacement (CC)']) ."cc)";
