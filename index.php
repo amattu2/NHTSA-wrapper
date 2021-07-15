@@ -4,7 +4,7 @@ require("classes/nhtsa.class.php");
 
 // Perform raw decode
 echo "<h1>Perform raw decode</h1>", "<pre>";
-$decode = amattu\NHTSA::decodeVIN("4JGBB8GB4BA662410");
+$decode = amattu\NHTSA::decodeVIN("2B3KA43R86H389824");
 print_r($decode);
 echo "</pre>";
 
