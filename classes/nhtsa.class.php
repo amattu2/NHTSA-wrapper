@@ -120,6 +120,11 @@ class NHTSA {
     } else if (isset($result['Displacement (CC)']) && !empty($result['Displacement (CC)'])) {
       $parsed_result['Engine'] .= " (". number_format($result['Displacement (CC)']) ."cc)";
     }
+    if (isset($result["Valve Train Design"]) && !empty($result["Valve Train Design"]) && strtolower($result["Valve Train Design"]) == "dual overhead cam (dohc)") {
+      $parsed_result['Engine'] .= " (DOHC)";
+    } else if (isset($result["Valve Train Design"]) && !empty($result["Valve Train Design"]) && strtolower($result["Valve Train Design"]) == "single overhead cam (sohc)") {
+      $parsed_result['Engine'] .= " (SOHC)";
+    }
     if (isset($parsed_result['Engine'])) {
       $parsed_result['Engine'] = strtoupper(preg_replace('/\s\s+/', ' ', $parsed_result['Engine']));
     }
