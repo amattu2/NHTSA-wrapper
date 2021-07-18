@@ -134,10 +134,12 @@ class NHTSA {
     } else if (isset($result['Displacement (CC)']) && !empty($result['Displacement (CC)'])) {
       $parsed_result['Engine'] .= " (". number_format($result['Displacement (CC)']) ."cc)";
     }
-    if (isset($result["Valve Train Design"]) && !empty($result["Valve Train Design"]) && strpos($result["Valve Train Design"], "DOHC") !== false) {
-      $parsed_result['Engine'] .= " (DOHC)";
-    } else if (isset($result["Valve Train Design"]) && !empty($result["Valve Train Design"]) && strpos($result["Valve Train Design"], "SOHC") !== false) {
-      $parsed_result['Engine'] .= " (SOHC)";
+    if (preg_match('%\b(DOHC|SOHC)\b%i', $parsed_result["Engine"]) == 0 && isset($result["Valve Train Design"]) && !empty($result["Valve Train Design"])) {
+      if (strpos($result["Valve Train Design"], "DOHC") !== false) {
+        $parsed_result['Engine'] .= " (DOHC)";
+      } else if (strpos($result["Valve Train Design"], "SOHC") !== false) {
+        $parsed_result['Engine'] .= " (SOHC)";
+      }
     }
     if (isset($parsed_result['Engine'])) {
       $parsed_result['Engine'] = strtoupper(preg_replace('/\s\s+/', ' ', $parsed_result['Engine']));
