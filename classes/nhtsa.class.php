@@ -116,7 +116,7 @@ class NHTSA {
       }
     }
     if (isset($parsed_result['Trim'])) {
-      $parsed_result['Trim'] = strtoupper(preg_replace('/\s\s+/', ' ', $parsed_result['Trim']));
+      $parsed_result['Trim'] = trim(strtoupper(preg_replace('/\s\s+/', ' ', $parsed_result['Trim'])));
     }
 
     // Parse Engine
