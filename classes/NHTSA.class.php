@@ -241,13 +241,13 @@ class NHTSA {
     // Drive Train
     if (isset($result['Drive Type']) && !empty($result['Drive Type'])) {
       if (strpos($result["Drive Type"], "RWD") !== false) {
-        $trim["Trim"] .= " RWD";
+        $trim .= " RWD";
       } else if (strpos($result["Drive Type"], "FWD") !== false) {
-        $trim["Trim"] .= " FWD";
+        $trim .= " FWD";
       } else if (strpos($result["Drive Type"], "4WD") !== false) {
-        $trim["Trim"] .= " 4WD";
+        $trim .= " 4WD";
       } else if (strpos($result["Drive Type"], "AWD") !== false) {
-        $trim["Trim"] .= " AWD";
+        $trim .= " AWD";
       }
     }
 
