@@ -1,6 +1,6 @@
 <?php
 // Files
-require("classes/nhtsa.class.php");
+require("classes/NHTSA.class.php");
 
 // Perform raw decode
 echo "<h1>Perform raw decode</h1>", "<pre>";
