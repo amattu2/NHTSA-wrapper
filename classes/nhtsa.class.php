@@ -120,30 +120,7 @@ class NHTSA {
     }
 
     // Parse Engine
-    if (isset($result['Displacement (L)']) && !empty($result['Displacement (L)'])) {
-      $parsed_result['Engine'] = sprintf("%0.1f", $result['Displacement (L)']) ."L";
-    }
-    if (isset($result['Engine Number of Cylinders']) && !empty($result['Engine Number of Cylinders'])) {
-      $parsed_result['Engine'] .= " ". $result['Engine Number of Cylinders'] ."-Cyl";
-    }
-    if (isset($result['Fuel Type - Primary']) && !empty($result['Fuel Type - Primary']) && strtolower($result['Fuel Type - Primary']) == "diesel") {
-      $parsed_result['Engine'] .= " (Diesel)";
-    }
-    if (isset($result['Engine Model']) && !empty($result['Engine Model']) && strlen($result["Engine Model"]) <= 30) {
-      $parsed_result['Engine'] .= " (". $result['Engine Model'] .")";
-    } else if (isset($result['Displacement (CC)']) && !empty($result['Displacement (CC)'])) {
-      $parsed_result['Engine'] .= " (". number_format($result['Displacement (CC)']) ."cc)";
-    }
-    if (preg_match('%\b(DOHC|SOHC)\b%i', $parsed_result["Engine"]) == 0 && isset($result["Valve Train Design"]) && !empty($result["Valve Train Design"])) {
-      if (strpos($result["Valve Train Design"], "DOHC") !== false) {
-        $parsed_result['Engine'] .= " (DOHC)";
-      } else if (strpos($result["Valve Train Design"], "SOHC") !== false) {
-        $parsed_result['Engine'] .= " (SOHC)";
-      }
-    }
-    if (isset($parsed_result['Engine'])) {
-      $parsed_result['Engine'] = strtoupper(preg_replace('/\s\s+/', ' ', $parsed_result['Engine']));
-    }
+    $parsed_result['Engine'] = self::parse_engine($result);
 
     // Return
     return !empty($parsed_result) ? $parsed_result : null;
@@ -251,6 +228,66 @@ class NHTSA {
     } catch (\Exception $e) {
       return new \DateTime();
     }
+  }
+
+  /**
+   * Parse all of the Engine options from NHTSA decode
+   *
+   * @param array raw decode result
+   * @return string Formatted Engine decode
+   * @throws TypeError
+   * @author Alec M. <https://amattu.com>
+   * @date 2021-07-22T11:30:38-040
+   */
+  private static function parse_engine(array $result) : string
+  {
+    // Formatted Engine
+    $engine = "";
+
+    // Displacement
+    if (isset($result['Displacement (L)']) && !empty($result['Displacement (L)'])) {
+      $engine = sprintf("%0.1f", $result['Displacement (L)']) ."L";
+    }
+
+    // Cylinders
+    if (isset($result['Engine Number of Cylinders']) && !empty($result['Engine Number of Cylinders'])) {
+      $engine .= " ". $result['Engine Number of Cylinders'] ."-Cyl";
+    }
+
+    // Fuel Type
+    if (isset($result['Fuel Type - Primary']) && !empty($result['Fuel Type - Primary'])) {
+      switch (strtolower($result['Fuel Type - Primary'])) {
+        case "diesel":
+          $engine .= " (DIESEL)";
+          break;
+        case "flex":
+          $engine .= " (FLEX)";
+          break;
+      }
+    }
+
+    // Model/Cubic-Centimeters Denotation
+    if (isset($result['Engine Model']) && !empty($result['Engine Model']) && strlen($result["Engine Model"]) <= 30) {
+      $engine .= " (". $result['Engine Model'] .")";
+    } else if (isset($result['Displacement (CC)']) && !empty($result['Displacement (CC)'])) {
+      $engine .= " (". number_format($result['Displacement (CC)']) ."cc)";
+    }
+
+    // Valve Design
+    if (preg_match('%\b(DOHC|SOHC|CVA|OHV)\b%i', $engine) == 0 && isset($result["Valve Train Design"]) && !empty($result["Valve Train Design"])) {
+      if (strpos($result["Valve Train Design"], "DOHC") !== false) {
+        $engine .= " (DOHC)";
+      } else if (strpos($result["Valve Train Design"], "SOHC") !== false) {
+        $engine .= " (SOHC)";
+      } else if (strpos($result["Valve Train Design"], "OHV") !== false) {
+        $engine .= " (OHV)";
+      } else if (strpos($result["Valve Train Design"], "CVA") !== false) {
+        $engine .= " (CVA)";
+      }
+    }
+
+    // Return Formatted Result
+    return strtoupper(trim(preg_replace('/\s\s+/', ' ', $engine)));
   }
 
   /**
