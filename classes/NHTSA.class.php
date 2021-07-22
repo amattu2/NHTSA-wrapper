@@ -21,6 +21,21 @@ class NHTSA {
   private static $minimum_year = 1950;
   private static $minimum_make_length = 3;
   private static $minimum_model_length = 3;
+  private const K = "Variable";
+  private const KI = "VariableId";
+  private const V = "Value";
+  private const VI = "ValueId";
+  private const V_MODEL_YEAR = 29;
+  private const V_MAKE = 26;
+  private const V_MODEL = 28;
+  private const V_TRIM = 38;
+  private const V_DRIVE_TYPE = 15;
+  private const V_ENG_DISPLACEMENT_L = 13;
+  private const V_ENG_DISPLACEMENT_CC = 11;
+  private const V_ENG_VALVE_DESIGN = 62;
+  private const V_ENG_NUM_CYLINDERS = 9;
+  private const V_ENG_FUEL_PRIMARY = 24;
+  private const V_ENG_MODEL = 18;
 
   /**
    * Decode a 17-digit VIN
@@ -56,16 +71,21 @@ class NHTSA {
     // Parse Data
     foreach($result["Results"] as $item) {
       // Checks
-      if (!$item['Value'] || !$item['Variable']) { continue; }
-      if ($item['Variable'] === "Error Text") { continue; }
-      if ($item['Value'] === "Not Applicable") { continue; }
+      if (!$item[self::KI] || empty($item[self::K])) { continue; }
+      if (empty($item[self::V])) { continue; }
+      if ($item[self::K] === "Error Text") { continue; }
+      if ($item[self::K] === "Not Applicable") { continue; }
 
       // Variables
-      $parsed_result[$item['Variable']] = $item['Value'];
+      $parsed_result[$item[self::KI]] = Array(
+        "Variable" => $item[self::K],
+        "Value" => $item[self::V],
+        "ValueId" => $item[self::VI]
+      );
     }
 
     // Return
-    return isset($result["Count"]) && $result["Count"] > 0 && !isset($parsed_result["Error Code"]) ? $parsed_result : null;
+    return isset($result["Count"]) && $result["Count"] > 0 && !isset($parsed_result[143]) ? $parsed_result : null;
   }
 
   /**
@@ -89,20 +109,20 @@ class NHTSA {
     $parsed_result = Array();
 
     // Parse Year
-    if (isset($result['Model Year']) && is_numeric($result['Model Year'])) {
-      $parsed_result["Model_Year"] = $result["Model Year"];
+    if (isset($result[self::V_MODEL_YEAR]) && is_numeric($result[self::V_MODEL_YEAR][self::V])) {
+      $parsed_result["Model_Year"] = $result[self::V_MODEL_YEAR][self::V];
     } else {
       $parsed_result["Model_Year"] = null;
     }
 
     // Parse Make
-    if (isset($result['Make']) && !empty($result['Make'])) {
-      $parsed_result['Make'] = strtoupper($result['Make']);
+    if (isset($result[self::V_MAKE])) {
+      $parsed_result['Make'] = strtoupper($result[self::V_MAKE][self::V]);
     }
 
     // Parse Make
-    if (isset($result['Model']) && !empty($result['Model'])) {
-      $parsed_result['Model'] = strtoupper($result['Model']);
+    if (isset($result[self::V_MODEL])) {
+      $parsed_result['Model'] = strtoupper($result[self::V_MODEL][self::V]);
     }
 
     // Parse Trim
@@ -234,20 +254,25 @@ class NHTSA {
     $trim = "";
 
     // Supplied Trim
-    if (isset($result['Trim']) && !empty($result['Trim'])) {
-      $trim = strtoupper($result['Trim']);
+    if (isset($result[self::V_TRIM])) {
+      $trim = strtoupper($result[self::V_TRIM][self::V]);
     }
 
     // Drive Train
-    if (isset($result['Drive Type']) && !empty($result['Drive Type'])) {
-      if (strpos($result["Drive Type"], "RWD") !== false) {
-        $trim .= " RWD";
-      } else if (strpos($result["Drive Type"], "FWD") !== false) {
-        $trim .= " FWD";
-      } else if (strpos($result["Drive Type"], "4WD") !== false) {
-        $trim .= " 4WD";
-      } else if (strpos($result["Drive Type"], "AWD") !== false) {
-        $trim .= " AWD";
+    if (isset($result[self::V_DRIVE_TYPE])) {
+      switch ($result[self::V_DRIVE_TYPE][self::VI]) {
+        case 1:
+          $trim .= " FWD";
+          break;
+        case 2:
+          $trim .= " 4WD";
+          break;
+        case 3:
+          $trim .= " AWD";
+          break;
+        case 4:
+          $trim .= " RWD";
+          break;
       }
     }
 
@@ -270,44 +295,64 @@ class NHTSA {
     $engine = "";
 
     // Displacement
-    if (isset($result['Displacement (L)']) && !empty($result['Displacement (L)'])) {
-      $engine = sprintf("%0.1f", $result['Displacement (L)']) ."L";
+    if (isset($result[self::V_ENG_DISPLACEMENT_L])) {
+      $engine = sprintf("%0.1f", $result[self::V_ENG_DISPLACEMENT_L][self::V]) . "L";
     }
 
     // Cylinders
-    if (isset($result['Engine Number of Cylinders']) && !empty($result['Engine Number of Cylinders'])) {
-      $engine .= " ". $result['Engine Number of Cylinders'] ."-Cyl";
+    if (isset($result[self::V_ENG_NUM_CYLINDERS])) {
+      $engine .= " ". $result[self::V_ENG_NUM_CYLINDERS][self::V] ."-Cyl";
     }
 
     // Fuel Type
-    if (isset($result['Fuel Type - Primary']) && !empty($result['Fuel Type - Primary'])) {
-      switch (strtolower($result['Fuel Type - Primary'])) {
-        case "diesel":
+    if (isset($result[self::V_ENG_FUEL_PRIMARY])) {
+      switch ($result[self::V_ENG_FUEL_PRIMARY][self::VI]) {
+        case 1:
           $engine .= " (DIESEL)";
           break;
-        case "flex":
+        case 6:
+          $engine .= " (CNG)";
+          break;
+        case 7:
+          $engine .= " (LNG)";
+          break;
+        case 8:
+          $engine .= " (H2)";
+          break;
+        case 9:
+          $engine .= " (LPG)";
+          break;
+        case 10:
+          $engine .= " (E85)";
+          break;
+        case 15:
           $engine .= " (FLEX)";
           break;
       }
     }
 
     // Model/Cubic-Centimeters Denotation
-    if (isset($result['Engine Model']) && !empty($result['Engine Model']) && strlen($result["Engine Model"]) <= 30) {
-      $engine .= " (". $result['Engine Model'] .")";
-    } else if (isset($result['Displacement (CC)']) && !empty($result['Displacement (CC)'])) {
-      $engine .= " (". number_format($result['Displacement (CC)']) ."cc)";
+    if (isset($result[self::V_ENG_MODEL]) && strlen($result[self::V_ENG_MODEL][self::V]) <= 30) {
+      $engine .= " (". $result[self::V_ENG_MODEL][self::V] .")";
+    } else if (isset($result[self::V_ENG_DISPLACEMENT_CC])) {
+      $engine .= " (". number_format($result[self::V_ENG_DISPLACEMENT_CC][self::V]) ."cc)";
     }
 
     // Valve Design
-    if (preg_match('%\b(DOHC|SOHC|CVA|OHV)\b%i', $engine) == 0 && isset($result["Valve Train Design"]) && !empty($result["Valve Train Design"])) {
-      if (strpos($result["Valve Train Design"], "DOHC") !== false) {
-        $engine .= " (DOHC)";
-      } else if (strpos($result["Valve Train Design"], "SOHC") !== false) {
-        $engine .= " (SOHC)";
-      } else if (strpos($result["Valve Train Design"], "OHV") !== false) {
-        $engine .= " (OHV)";
-      } else if (strpos($result["Valve Train Design"], "CVA") !== false) {
-        $engine .= " (CVA)";
+    if (preg_match('%\b(DOHC|SOHC|CVA|OHV)\b%i', $engine) == 0 && isset($result[self::V_ENG_VALVE_DESIGN])) {
+      switch ($result[self::V_ENG_VALVE_DESIGN][self::VI]) {
+        case 1:
+          $engine .= " (CVA)";
+          break;
+        case 2:
+          $engine .= " (DOHC)";
+          break;
+        case 3:
+          $engine .= " (OHV)";
+          break;
+        case 4:
+          $engine .= " (SOHC)";
+          break;
       }
     }
 
