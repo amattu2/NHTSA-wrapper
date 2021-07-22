@@ -235,7 +235,7 @@ class NHTSA {
 
     // Supplied Trim
     if (isset($result['Trim']) && !empty($result['Trim'])) {
-      $trim['Trim'] = strtoupper($result['Trim']);
+      $trim = strtoupper($result['Trim']);
     }
 
     // Drive Train
@@ -252,7 +252,7 @@ class NHTSA {
     }
 
     // Return Formatted Result
-    return strtoupper(trim(preg_replace('/\s\s+/', ' ', $trim['Trim'])));
+    return strtoupper(trim(preg_replace('/\s\s+/', ' ', $trim)));
   }
 
   /**
