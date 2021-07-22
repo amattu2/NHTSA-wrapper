@@ -48,6 +48,11 @@ class NHTSA {
     $result = json_decode(self::http_get($endpoint), true);
     $parsed_result = Array();
 
+    // Check Return Data
+    if (!$result || !isset($result["Results"]) || !isset($result["Count"])) {
+      return null;
+    }
+
     // Parse Data
     foreach($result["Results"] as $item) {
       // Checks
@@ -60,7 +65,7 @@ class NHTSA {
     }
 
     // Return
-    return $result["Count"] && $result["Count"] > 0 && !isset($parsed_result["Error Code"]) ? $parsed_result : null;
+    return isset($result["Count"]) && $result["Count"] > 0 && !isset($parsed_result["Error Code"]) ? $parsed_result : null;
   }
 
   /**
@@ -139,7 +144,7 @@ class NHTSA {
     $result = json_decode(self::http_get($endpoint), true);
 
     // Return Result
-    return $result["Count"] && $result["Count"] > 0 ? $result["Results"] : null;
+    return $result && isset($result["Count"]) && $result["Count"] > 0 ? $result["Results"] : null;
   }
 
   /**
