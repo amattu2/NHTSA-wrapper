@@ -101,23 +101,7 @@ class NHTSA {
     }
 
     // Parse Trim
-    if (isset($result['Trim']) && !empty($result['Trim'])) {
-      $parsed_result['Trim'] = strtoupper($result['Trim']);
-    }
-    if (isset($result["Drive Type"]) && !empty($result["Drive Type"])) {
-      if (strpos($result["Drive Type"], "RWD") !== false) {
-        $parsed_result["Trim"] .= " RWD";
-      } else if (strpos($result["Drive Type"], "FWD") !== false) {
-        $parsed_result["Trim"] .= " FWD";
-      } else if (strpos($result["Drive Type"], "4WD") !== false) {
-        $parsed_result["Trim"] .= " 4WD";
-      } else if (strpos($result["Drive Type"], "AWD") !== false) {
-        $parsed_result["Trim"] .= " AWD";
-      }
-    }
-    if (isset($parsed_result['Trim'])) {
-      $parsed_result['Trim'] = trim(strtoupper(preg_replace('/\s\s+/', ' ', $parsed_result['Trim'])));
-    }
+    $parsed_result['Trim'] = self::parse_trim($result);
 
     // Parse Engine
     $parsed_result['Engine'] = self::parse_engine($result);
@@ -228,6 +212,42 @@ class NHTSA {
     } catch (\Exception $e) {
       return new \DateTime();
     }
+  }
+
+  /**
+   * Parse all Trim options from NHTSA decode
+   *
+   * @param array raw decode result
+   * @return string Formatted Trim decode
+   * @throws TypeError
+   * @author Alec M. <https://amattu.com>
+   * @date 2021-07-22T11:58:01-040
+   */
+  private static function parse_trim(array $result) : string
+  {
+    // Formatted Trim
+    $trim = "";
+
+    // Supplied Trim
+    if (isset($result['Trim']) && !empty($result['Trim'])) {
+      $trim['Trim'] = strtoupper($result['Trim']);
+    }
+
+    // Drive Train
+    if (isset($result['Drive Type']) && !empty($result['Drive Type'])) {
+      if (strpos($result["Drive Type"], "RWD") !== false) {
+        $trim["Trim"] .= " RWD";
+      } else if (strpos($result["Drive Type"], "FWD") !== false) {
+        $trim["Trim"] .= " FWD";
+      } else if (strpos($result["Drive Type"], "4WD") !== false) {
+        $trim["Trim"] .= " 4WD";
+      } else if (strpos($result["Drive Type"], "AWD") !== false) {
+        $trim["Trim"] .= " AWD";
+      }
+    }
+
+    // Return Formatted Result
+    return strtoupper(trim(preg_replace('/\s\s+/', ' ', $trim['Trim'])));
   }
 
   /**
