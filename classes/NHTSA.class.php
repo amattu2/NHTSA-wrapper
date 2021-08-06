@@ -74,7 +74,7 @@ class NHTSA {
       if (!$item[self::KI] || empty($item[self::K])) { continue; }
       if (empty($item[self::V])) { continue; }
       if ($item[self::K] === "Error Text") { continue; }
-      if ($item[self::K] === "Not Applicable") { continue; }
+      if ($item[self::V] === "Not Applicable") { continue; }
 
       // Variables
       $parsed_result[$item[self::KI]] = Array(
