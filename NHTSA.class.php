@@ -41,8 +41,8 @@ class NHTSA {
    * Decode a 17-digit VIN
    *
    * @param string vin number
-   * @param ?integer model year
-   * @return ?array raw NHTSA result
+   * @param int model year
+   * @return array raw NHTSA result
    * @throws TypeError
    * @author Alec M. <https://amattu.com>
    * @date 2021-04-04T16:19:40-040
