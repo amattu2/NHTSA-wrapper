@@ -37,6 +37,7 @@ class NHTSA {
   private const V_ENG_FUEL_PRIMARY = 24;
   private const V_ENG_MODEL = 18;
   private const V_ENG_TURBO = 135;
+  private const V_ENG_BHP = 71;
 
   /**
    * Decode a 17-digit VIN
@@ -303,6 +304,11 @@ class NHTSA {
     // Cylinders
     if (isset($result[self::V_ENG_NUM_CYLINDERS])) {
       $engine .= " ". $result[self::V_ENG_NUM_CYLINDERS][self::V] ."-Cyl";
+    }
+
+    // Engine BHP From
+    if (isset($result[self::V_ENG_BHP]) && is_numeric($result[self::V_ENG_TURBO][self::V])) {
+      $engine .= $result[self::V_ENG_TURBO][self::V] . "bhp";
     }
 
     // Fuel Type
