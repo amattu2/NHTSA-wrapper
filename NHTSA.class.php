@@ -30,6 +30,7 @@ class NHTSA {
   private const V_MODEL = 28;
   private const V_TRIM = 38;
   private const V_DRIVE_TYPE = 15;
+  private const V_BODY_TYPE = 5;
   private const V_ENG_DISPLACEMENT_L = 13;
   private const V_ENG_DISPLACEMENT_CC = 11;
   private const V_ENG_VALVE_DESIGN = 62;
@@ -274,6 +275,24 @@ class NHTSA {
           break;
         case 4:
           $trim .= " RWD";
+          break;
+      }
+    }
+
+    // Body Class
+    if (isset($result[self::V_BODY_TYPE])) {
+      switch ($result[self::V_BODY_TYPE][self::VI]) {
+        case 1:
+          $trim .= " CONVERTIBLE";
+          break;
+        case 3:
+          $trim .= " COUPE";
+          break;
+        case 8:
+          $trim .= " CUV";
+          break;
+        case 15:
+          $trim .= " WAGON";
           break;
       }
     }
