@@ -316,41 +316,58 @@ class NHTSA {
     // Formatted Engine
     $engine = "";
 
-    // Displacement
-    // i.e. 3.0L
+    // Displacement or Cubic-Centimeters
     if (isset($result[self::V_ENG_DISPLACEMENT_L])) {
-      $engine = sprintf("%0.1f", $result[self::V_ENG_DISPLACEMENT_L][self::V]) . "L";
+      $engine .= sprintf("%0.1f", $result[self::V_ENG_DISPLACEMENT_L][self::V]) . "L";
+    } else if (isset($result[self::V_ENG_DISPLACEMENT_CC])) {
+      $engine .= number_format($result[self::V_ENG_DISPLACEMENT_CC][self::V]) . "CC";
     }
 
     // Cylinders
-    // i.e. 4-Cyl
     if (isset($result[self::V_ENG_NUM_CYLINDERS])) {
       $engine .= " ". $result[self::V_ENG_NUM_CYLINDERS][self::V] . "-CYL";
     }
 
-    // Engine BHP From
-    // i.e. 280BHP
-    if (isset($result[self::V_ENG_BHP]) && is_numeric($result[self::V_ENG_BHP][self::V])) {
-      $engine .= " ". $result[self::V_ENG_BHP][self::V] . "BHP";
+    // Model
+    if (isset($result[self::V_ENG_MODEL]) && strlen($result[self::V_ENG_MODEL][self::V]) <= 30) {
+      $engine .= " " . $result[self::V_ENG_MODEL][self::V];
+    }
+
+    // Valve Design
+    if (preg_match('%\b(DOHC|SOHC|CVA|OHV)\b%i', $engine) == 0 && isset($result[self::V_ENG_VALVE_DESIGN])) {
+      switch ($result[self::V_ENG_VALVE_DESIGN][self::VI]) {
+        case 1:
+          $engine .= " CVA";
+          break;
+        case 2:
+          $engine .= " DOHC";
+          break;
+        case 3:
+          $engine .= " OHV";
+          break;
+        case 4:
+          $engine .= " SOHC";
+          break;
+      }
     }
 
     // Fuel Type
     if (preg_match('%\b(DIESEL|CNG|E85|FLEX)\b%i', $engine) == 0 && isset($result[self::V_ENG_FUEL_PRIMARY])) {
       switch ($result[self::V_ENG_FUEL_PRIMARY][self::VI]) {
         case 1:
-          $engine .= " (DIESEL)";
+          $engine .= " DIESEL";
           break;
         case 6:
-          $engine .= " (CNG)";
+          $engine .= " CNG";
           break;
         case 7:
-          $engine .= " (LNG)";
+          $engine .= " LNG";
           break;
         case 8:
-          $engine .= " (H2)";
+          $engine .= " H2";
           break;
         case 9:
-          $engine .= " (LPG)";
+          $engine .= " LPG";
           break;
         case 10:
           $engine .= " (E85)";
@@ -361,52 +378,26 @@ class NHTSA {
       }
     }
 
-    // Model/Cubic-Centimeters Denotation
-    // i.e. 2500CC
-    if (isset($result[self::V_ENG_MODEL]) && strlen($result[self::V_ENG_MODEL][self::V]) <= 30) {
-      $engine .= " (" . $result[self::V_ENG_MODEL][self::V] . ")";
-    } else if (isset($result[self::V_ENG_DISPLACEMENT_CC]) && !isset($result[self::V_ENG_DISPLACEMENT_L])) {
-      $engine .= " (" . number_format($result[self::V_ENG_DISPLACEMENT_CC][self::V]) . "CC)";
-    }
-
-    // Valve Design
-    if (preg_match('%\b(DOHC|SOHC|CVA|OHV)\b%i', $engine) == 0 && isset($result[self::V_ENG_VALVE_DESIGN])) {
-      switch ($result[self::V_ENG_VALVE_DESIGN][self::VI]) {
-        case 1:
-          $engine .= " (CVA)";
-          break;
-        case 2:
-          $engine .= " (DOHC)";
-          break;
-        case 3:
-          $engine .= " (OHV)";
-          break;
-        case 4:
-          $engine .= " (SOHC)";
-          break;
-      }
-    }
-
     // Fuel Injection Design
     if (preg_match('%\b(SGDI|MPFI|SFI)\b%i', $engine) == 0 && isset($result[self::V_ENG_FI])) {
       switch ($result[self::V_ENG_FI][self::VI]) {
         case 1:
-          $engine .= " (SGDI)";
+          $engine .= " SGDI";
           break;
         case 2:
-          $engine .= " (LBGDI)";
+          $engine .= " LBGDI";
           break;
         case 3:
-          $engine .= " (MPFI)";
+          $engine .= " MPFI";
           break;
         case 4:
-          $engine .= " (SFI)";
+          $engine .= " SFI";
           break;
         case 6:
-          $engine .= " (CRDI)";
+          $engine .= " CRDI";
           break;
         case 7:
-          $engine .= " (UDI)";
+          $engine .= " UDI";
           break;
       }
     }
@@ -415,9 +406,15 @@ class NHTSA {
     if (preg_match('%\b(TURBO|TDI)\b%i', $engine) == 0 && isset($result[self::V_ENG_TURBO])) {
       switch ($result[self::V_ENG_TURBO][self::VI]) {
         case 1:
-          $engine .= " (TURBO)";
+          $engine .= " TURBO";
           break;
       }
+    }
+
+    // Engine BHP From
+    // i.e. 280BHP
+    if (isset($result[self::V_ENG_BHP]) && is_numeric($result[self::V_ENG_BHP][self::V])) {
+      $engine .= " ". $result[self::V_ENG_BHP][self::V] . "BHP";
     }
 
     // Return Formatted Result
