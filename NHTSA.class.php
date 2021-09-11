@@ -341,7 +341,7 @@ class NHTSA {
     // Model/Cubic-Centimeters Denotation
     if (isset($result[self::V_ENG_MODEL]) && strlen($result[self::V_ENG_MODEL][self::V]) <= 30) {
       $engine .= " (". $result[self::V_ENG_MODEL][self::V] .")";
-    } else if (isset($result[self::V_ENG_DISPLACEMENT_CC])) {
+    } else if (isset($result[self::V_ENG_DISPLACEMENT_CC]) && !isset($result[self::V_ENG_DISPLACEMENT_L])) {
       $engine .= " (". number_format($result[self::V_ENG_DISPLACEMENT_CC][self::V]) ."cc)";
     }
 
