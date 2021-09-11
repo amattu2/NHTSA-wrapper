@@ -326,8 +326,8 @@ class NHTSA {
     }
 
     // Engine BHP From
-    if (isset($result[self::V_ENG_BHP]) && is_numeric($result[self::V_ENG_TURBO][self::V])) {
-      $engine .= $result[self::V_ENG_TURBO][self::V] . "bhp";
+    if (isset($result[self::V_ENG_BHP]) && is_numeric($result[self::V_ENG_BHP][self::V])) {
+      $engine .= " ". $result[self::V_ENG_BHP][self::V] . "bhp";
     }
 
     // Fuel Type
