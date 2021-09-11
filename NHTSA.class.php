@@ -34,6 +34,7 @@ class NHTSA {
   private const V_ENG_DISPLACEMENT_L = 13;
   private const V_ENG_DISPLACEMENT_CC = 11;
   private const V_ENG_VALVE_DESIGN = 62;
+  private const V_ENG_FI = 67;
   private const V_ENG_NUM_CYLINDERS = 9;
   private const V_ENG_FUEL_PRIMARY = 24;
   private const V_ENG_MODEL = 18;
@@ -382,6 +383,30 @@ class NHTSA {
           break;
         case 4:
           $engine .= " (SOHC)";
+          break;
+      }
+    }
+
+    // Fuel Injection Design
+    if (preg_match('%\b(SGDI|MPFI|SFI)\b%i', $engine) == 0 && isset($result[self::V_ENG_FI])) {
+      switch ($result[self::V_ENG_FI][self::VI]) {
+        case 1:
+          $engine .= " (SGDI)";
+          break;
+        case 2:
+          $engine .= " (LBGDI)";
+          break;
+        case 3:
+          $engine .= " (MPFI)";
+          break;
+        case 4:
+          $engine .= " (SFI)";
+          break;
+        case 6:
+          $engine .= " (CRDI)";
+          break;
+        case 7:
+          $engine .= " (UDI)";
           break;
       }
     }
