@@ -1,5 +1,5 @@
 # Introduction
-This is a simple VIN decoder wrapper for the NHTSA (United States Department of Transportation) VIN decoder API. Additionally, it includes the NHTSA vehicle recall API. See usage section below or the example `index.php` file.
+This is a simple VIN decoder wrapper for the [NHTSA (United States Department of Transportation) VIN decoder API](https://vpic.nhtsa.dot.gov/api/). Additionally, it includes the NHTSA vehicle recall API. See usage section below or the example `index.php` file.
 
 # Usage
 ### Import
