@@ -316,18 +316,21 @@ class NHTSA {
     $engine = "";
 
     // Displacement
+    // i.e. 3.0L
     if (isset($result[self::V_ENG_DISPLACEMENT_L])) {
       $engine = sprintf("%0.1f", $result[self::V_ENG_DISPLACEMENT_L][self::V]) . "L";
     }
 
     // Cylinders
+    // i.e. 4-Cyl
     if (isset($result[self::V_ENG_NUM_CYLINDERS])) {
-      $engine .= " ". $result[self::V_ENG_NUM_CYLINDERS][self::V] ."-Cyl";
+      $engine .= " ". $result[self::V_ENG_NUM_CYLINDERS][self::V] . "-CYL";
     }
 
     // Engine BHP From
+    // i.e. 280BHP
     if (isset($result[self::V_ENG_BHP]) && is_numeric($result[self::V_ENG_BHP][self::V])) {
-      $engine .= " ". $result[self::V_ENG_BHP][self::V] . "bhp";
+      $engine .= " ". $result[self::V_ENG_BHP][self::V] . "BHP";
     }
 
     // Fuel Type
@@ -358,10 +361,11 @@ class NHTSA {
     }
 
     // Model/Cubic-Centimeters Denotation
+    // i.e. 2500CC
     if (isset($result[self::V_ENG_MODEL]) && strlen($result[self::V_ENG_MODEL][self::V]) <= 30) {
-      $engine .= " (". $result[self::V_ENG_MODEL][self::V] .")";
+      $engine .= " (" . $result[self::V_ENG_MODEL][self::V] . ")";
     } else if (isset($result[self::V_ENG_DISPLACEMENT_CC]) && !isset($result[self::V_ENG_DISPLACEMENT_L])) {
-      $engine .= " (". number_format($result[self::V_ENG_DISPLACEMENT_CC][self::V]) ."cc)";
+      $engine .= " (" . number_format($result[self::V_ENG_DISPLACEMENT_CC][self::V]) . "CC)";
     }
 
     // Valve Design
