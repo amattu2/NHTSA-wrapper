@@ -36,6 +36,7 @@ class NHTSA {
   private const V_ENG_NUM_CYLINDERS = 9;
   private const V_ENG_FUEL_PRIMARY = 24;
   private const V_ENG_MODEL = 18;
+  private const V_ENG_TURBO = 135;
 
   /**
    * Decode a 17-digit VIN
@@ -352,6 +353,15 @@ class NHTSA {
           break;
         case 4:
           $engine .= " (SOHC)";
+          break;
+      }
+    }
+
+    // Turbo Presence
+    if (preg_match('%\b(TURBO|TDI)\b%i', $engine) == 0 && isset($result[self::V_ENG_TURBO])) {
+      switch ($result[self::V_ENG_TURBO][self::VI]) {
+        case 1:
+          $engine .= " (TURBO)";
           break;
       }
     }
