@@ -334,7 +334,7 @@ class NHTSA {
     }
 
     // Fuel Type
-    if (isset($result[self::V_ENG_FUEL_PRIMARY])) {
+    if (preg_match('%\b(DIESEL|CNG|E85|FLEX)\b%i', $engine) == 0 && isset($result[self::V_ENG_FUEL_PRIMARY])) {
       switch ($result[self::V_ENG_FUEL_PRIMARY][self::VI]) {
         case 1:
           $engine .= " (DIESEL)";
