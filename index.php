@@ -2,9 +2,12 @@
 // Files
 require("NHTSA.class.php");
 
+// Optional VIN $_GET input
+$vin = isset($_GET['vin']) && !empty($_GET['vin']) ? $_GET['vin'] : "2B3KA43R86H389824";
+
 // Perform raw decode
 echo "<h1>Perform raw decode</h1>", "<pre>";
-$decode = amattu\NHTSA::decodeVIN("2B3KA43R86H389824");
+$decode = amattu\NHTSA::decodeVIN($vin);
 print_r($decode);
 echo "</pre>";
 
