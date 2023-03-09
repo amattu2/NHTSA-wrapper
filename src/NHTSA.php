@@ -1,23 +1,36 @@
 <?php
 /*
-  Produced 2021
-  By https://amattu.com/links/github
-  Copy Alec M.
-  License GNU Affero General Public License v3.0
-*/
+ * Produced: Thu Mar 09 2023
+ * Author: Alec M.
+ * GitHub: https://amattu.com/links/github
+ * Copyright: (C) 2023 Alec M.
+ * License: License GNU Affero General Public License v3.0
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-// Class Namespace
-namespace amattu;
+namespace amattu2;
 
 /**
  * A https://vpic.nhtsa.dot.gov/api/ API access class
  */
-class NHTSA {
-  // Class Variables
-  private static $endpoints = Array(
+class NHTSA
+{
+  private static $endpoints = [
     "decode" => "https://vpic.nhtsa.dot.gov/api/vehicles/decodevin/%s?format=json",
     "recalls" => "https://one.nhtsa.gov/webapi/api/Recalls/vehicle/modelyear/%d/make/%s/model/%s?format=json",
-  );
+  ];
   private static $minimum_year = 1950;
   private static $minimum_make_length = 3;
   private static $minimum_model_length = 3;
@@ -47,11 +60,11 @@ class NHTSA {
    * @param string vin number
    * @param int model year
    * @return array raw NHTSA result
-   * @throws TypeError
+   * @throws \TypeError
    * @author Alec M. <https://amattu.com>
    * @date 2021-04-04T16:19:40-040
    */
-  public static function decodeVIN(string $vin, int $model_year = 0) : ?array
+  public static function decodeVIN(string $vin, int $model_year = 0): ?array
   {
     // Checks
     if (!$vin || strlen($vin) != 17) {
@@ -65,7 +78,7 @@ class NHTSA {
     $vin = strtoupper($vin);
     $endpoint = sprintf(self::$endpoints["decode"], $vin, ($model_year ? "&modelyear=$model_year" : ""));
     $result = json_decode(self::http_get($endpoint), true);
-    $parsed_result = Array();
+    $parsed_result = [];
 
     // Check Return Data
     if (!$result || !isset($result["Results"]) || !isset($result["Count"])) {
@@ -73,19 +86,19 @@ class NHTSA {
     }
 
     // Parse Data
-    foreach($result["Results"] as $item) {
+    foreach ($result["Results"] as $item) {
       // Checks
-      if (!$item[self::KI] || empty($item[self::K])) { continue; }
-      if (empty($item[self::V])) { continue; }
-      if ($item[self::K] === "Error Text") { continue; }
-      if ($item[self::V] === "Not Applicable") { continue; }
+      if (!$item[self::KI] || empty($item[self::K])) {continue;}
+      if (empty($item[self::V])) {continue;}
+      if ($item[self::K] === "Error Text") {continue;}
+      if ($item[self::V] === "Not Applicable") {continue;}
 
       // Variables
-      $parsed_result[$item[self::KI]] = Array(
+      $parsed_result[$item[self::KI]] = [
         "Variable" => $item[self::K],
         "Value" => $item[self::V],
-        "ValueId" => $item[self::VI]
-      );
+        "ValueId" => $item[self::VI],
+      ];
     }
 
     // Return
@@ -98,11 +111,11 @@ class NHTSA {
    *
    * @param array raw decode result
    * @return ?array pretty parsed NHTSA result
-   * @throws TypeError
+   * @throws \TypeError
    * @author Alec M. <https://amattu.com>
    * @date 2021-04-04T16:52:15-040
    */
-  public static function parseDecode(array $result = Array()) : ?array
+  public static function parseDecode(array $result = []): ?array
   {
     // Checks
     if (!$result || empty($result)) {
@@ -110,7 +123,7 @@ class NHTSA {
     }
 
     // Variables
-    $parsed_result = Array();
+    $parsed_result = [];
 
     // Parse Year
     if (isset($result[self::V_MODEL_YEAR]) && is_numeric($result[self::V_MODEL_YEAR][self::V])) {
@@ -146,11 +159,11 @@ class NHTSA {
    * @param string make
    * @param string model
    * @return ?array NHTSA raw result
-   * @throws TypeError
+   * @throws \TypeError
    * @author Alec M. <https://amattu.com>
    * @date 2021-04-04T16:48:24-040
    */
-  public static function getRecalls(int $model_year, string $make, string $model) : ?array
+  public static function getRecalls(int $model_year, string $make, string $model): ?array
   {
     // Checks
     if (!$model_year || $model_year < self::$minimum_year || $model_year > (date("Y") + 2)) {
@@ -176,11 +189,11 @@ class NHTSA {
    *
    * @param array raw recall result
    * @return ?array parsed recall result
-   * @throws TypeError
+   * @throws \TypeError
    * @author Alec M. <https://amattu.com>
    * @date 2021-04-04T18:16:26-040
    */
-  public static function parseRecalls(array $recalls = Array()) : ?array
+  public static function parseRecalls(array $recalls = []): ?array
   {
     // Checks
     if (!$recalls || empty($recalls)) {
@@ -188,7 +201,7 @@ class NHTSA {
     }
 
     // Variables
-    $parsed_result = Array();
+    $parsed_result = [];
 
     // Loops
     foreach ($recalls as $recall) {
@@ -207,13 +220,13 @@ class NHTSA {
       }
 
       // Variables
-      $parsed_result[] = Array(
+      $parsed_result[] = [
         "Campaign_Number" => $recall["NHTSACampaignNumber"],
         "Component" => explode(":", $recall["Component"]) ?: [],
         "Date" => self::parse_timestamp($recall["ReportReceivedDate"])->format("Y-m-d"),
         "Description" => $recall["Summary"] ?: "",
         "Remedy" => $recall["Remedy"] ?: "",
-      );
+      ];
     }
 
     // Return
@@ -224,21 +237,21 @@ class NHTSA {
    * Parse Unix Timestamp (Miliseconds with offset)
    *
    * @param string unix timestamp
-   * @return DateTime parsed representation
-   * @throws TypeError
+   * @return \DateTime parsed representation
+   * @throws \TypeError
    * @author Alec M. <https://amattu.com>
    * @see https://stackoverflow.com/questions/16749778/php-date-format-date1365004652303-0500
    * @date 2021-04-04T18:04:08-040
    */
-  private static function parse_timestamp(string $timestamp) : \DateTime
+  private static function parse_timestamp(string $timestamp): \DateTime
   {
     try {
       // Match Format
       preg_match('/(\d{10})(\d{3})([\+\-]\d{4})/', $timestamp, $matches);
 
       // Return
-      return \DateTime::createFromFormat("U.u.O",vsprintf('%2$s.%3$s.%4$s', $matches));
-    } catch (\Exception $e) {
+      return \DateTime::createFromFormat("U.u.O", vsprintf('%2$s.%3$s.%4$s', $matches));
+    } catch (\Exception$e) {
       return new \DateTime();
     }
   }
@@ -248,11 +261,11 @@ class NHTSA {
    *
    * @param array raw decode result
    * @return string Formatted Trim decode
-   * @throws TypeError
+   * @throws \TypeError
    * @author Alec M. <https://amattu.com>
    * @date 2021-07-22T11:58:01-040
    */
-  private static function parse_trim(array $result) : string
+  private static function parse_trim(array $result): string
   {
     // Formatted Trim
     $trim = "";
@@ -265,36 +278,36 @@ class NHTSA {
     // Drive Train
     if (isset($result[self::V_DRIVE_TYPE])) {
       switch ($result[self::V_DRIVE_TYPE][self::VI]) {
-        case 1:
-          $trim .= " FWD";
-          break;
-        case 2:
-          $trim .= " 4WD";
-          break;
-        case 3:
-          $trim .= " AWD";
-          break;
-        case 4:
-          $trim .= " RWD";
-          break;
+      case 1:
+        $trim .= " FWD";
+        break;
+      case 2:
+        $trim .= " 4WD";
+        break;
+      case 3:
+        $trim .= " AWD";
+        break;
+      case 4:
+        $trim .= " RWD";
+        break;
       }
     }
 
     // Body Class
     if (isset($result[self::V_BODY_TYPE])) {
       switch ($result[self::V_BODY_TYPE][self::VI]) {
-        case 1:
-          $trim .= " CONVERTIBLE";
-          break;
-        case 3:
-          $trim .= " COUPE";
-          break;
-        case 8:
-          $trim .= " CUV";
-          break;
-        case 15:
-          $trim .= " WAGON";
-          break;
+      case 1:
+        $trim .= " CONVERTIBLE";
+        break;
+      case 3:
+        $trim .= " COUPE";
+        break;
+      case 8:
+        $trim .= " CUV";
+        break;
+      case 15:
+        $trim .= " WAGON";
+        break;
       }
     }
 
@@ -307,11 +320,11 @@ class NHTSA {
    *
    * @param array raw decode result
    * @return string Formatted Engine decode
-   * @throws TypeError
+   * @throws \TypeError
    * @author Alec M. <https://amattu.com>
    * @date 2021-07-22T11:30:38-040
    */
-  private static function parse_engine(array $result) : string
+  private static function parse_engine(array $result): string
   {
     // Formatted Engine
     $engine = "";
@@ -325,7 +338,7 @@ class NHTSA {
 
     // Cylinders
     if (isset($result[self::V_ENG_NUM_CYLINDERS])) {
-      $engine .= " ". $result[self::V_ENG_NUM_CYLINDERS][self::V] . "-CYL";
+      $engine .= " " . $result[self::V_ENG_NUM_CYLINDERS][self::V] . "-CYL";
     }
 
     // Model
@@ -336,85 +349,85 @@ class NHTSA {
     // Valve Design
     if (preg_match('%\b(DOHC|SOHC|CVA|OHV)\b%i', $engine) == 0 && isset($result[self::V_ENG_VALVE_DESIGN])) {
       switch ($result[self::V_ENG_VALVE_DESIGN][self::VI]) {
-        case 1:
-          $engine .= " CVA";
-          break;
-        case 2:
-          $engine .= " DOHC";
-          break;
-        case 3:
-          $engine .= " OHV";
-          break;
-        case 4:
-          $engine .= " SOHC";
-          break;
+      case 1:
+        $engine .= " CVA";
+        break;
+      case 2:
+        $engine .= " DOHC";
+        break;
+      case 3:
+        $engine .= " OHV";
+        break;
+      case 4:
+        $engine .= " SOHC";
+        break;
       }
     }
 
     // Fuel Type
     if (preg_match('%\b(DIESEL|CNG|E85|FLEX)\b%i', $engine) == 0 && isset($result[self::V_ENG_FUEL_PRIMARY])) {
       switch ($result[self::V_ENG_FUEL_PRIMARY][self::VI]) {
-        case 1:
-          $engine .= " DIESEL";
-          break;
-        case 6:
-          $engine .= " CNG";
-          break;
-        case 7:
-          $engine .= " LNG";
-          break;
-        case 8:
-          $engine .= " H2";
-          break;
-        case 9:
-          $engine .= " LPG";
-          break;
-        case 10:
-          $engine .= " (E85)";
-          break;
-        case 15:
-          $engine .= " (FLEX)";
-          break;
+      case 1:
+        $engine .= " DIESEL";
+        break;
+      case 6:
+        $engine .= " CNG";
+        break;
+      case 7:
+        $engine .= " LNG";
+        break;
+      case 8:
+        $engine .= " H2";
+        break;
+      case 9:
+        $engine .= " LPG";
+        break;
+      case 10:
+        $engine .= " (E85)";
+        break;
+      case 15:
+        $engine .= " (FLEX)";
+        break;
       }
     }
 
     // Fuel Injection Design
     if (preg_match('%\b(SGDI|MPFI|SFI)\b%i', $engine) == 0 && isset($result[self::V_ENG_FI])) {
       switch ($result[self::V_ENG_FI][self::VI]) {
-        case 1:
-          $engine .= " SGDI";
-          break;
-        case 2:
-          $engine .= " LBGDI";
-          break;
-        case 3:
-          $engine .= " MPFI";
-          break;
-        case 4:
-          $engine .= " SFI";
-          break;
-        case 6:
-          $engine .= " CRDI";
-          break;
-        case 7:
-          $engine .= " UDI";
-          break;
+      case 1:
+        $engine .= " SGDI";
+        break;
+      case 2:
+        $engine .= " LBGDI";
+        break;
+      case 3:
+        $engine .= " MPFI";
+        break;
+      case 4:
+        $engine .= " SFI";
+        break;
+      case 6:
+        $engine .= " CRDI";
+        break;
+      case 7:
+        $engine .= " UDI";
+        break;
       }
     }
 
     // Turbo Presence
     if (preg_match('%\b(TURBO|TDI)\b%i', $engine) == 0 && isset($result[self::V_ENG_TURBO])) {
       switch ($result[self::V_ENG_TURBO][self::VI]) {
-        case 1:
-          $engine .= " TURBO";
-          break;
+      case 1:
+        $engine .= " TURBO";
+        break;
       }
     }
 
     // Engine BHP From
     // i.e. 280BHP
     if (isset($result[self::V_ENG_BHP]) && is_numeric($result[self::V_ENG_BHP][self::V])) {
-      $engine .= " ". $result[self::V_ENG_BHP][self::V] . "BHP";
+      $engine .= " " . $result[self::V_ENG_BHP][self::V] . "BHP";
     }
 
     // Return Formatted Result
@@ -426,11 +439,11 @@ class NHTSA {
    *
    * @param string URL
    * @return ?string result body
-   * @throws TypeError
+   * @throws \TypeError
    * @author Alec M. <https://amattu.com>
    * @date 2021-04-03T19:16:29-040
    */
-  private static function http_get(string $endpoint) : ?string
+  private static function http_get(string $endpoint): ?string
   {
     // cURL Initialization
     $handle = curl_init();
@@ -455,4 +468,3 @@ class NHTSA {
     return $result && !$error ? $result : null;
   }
 }
-?>
