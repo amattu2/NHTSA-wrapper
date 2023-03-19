@@ -1,15 +1,21 @@
 # Introduction
+
 This is a simple VIN decoder wrapper for the [NHTSA (United States Department of Transportation) VIN decoder API](https://vpic.nhtsa.dot.gov/api/). Additionally, it includes the NHTSA vehicle recall API. See usage section below or the example `index.php` file.
 
 # Usage
-### Import
+
+## Import
+
 ```PHP
 require("classes/nhtsa.class.php");
 ```
 
-### VIN Decode
-#### Raw Decode
+## VIN Decode
+
+### Raw Decode
+
 PHPDoc
+
 ```PHP
 /**
  * Decode a 17-digit VIN
@@ -24,11 +30,13 @@ PHPDoc
 ```
 
 Usage
+
 ```PHP
-$decode = amattu\NHTSA::decodeVIN("VIN_NUMBER");
+$decode = amattu2\NHTSA\Client::decodeVIN("VIN_NUMBER");
 ```
 
 Success return result
+
 ```
 Array
 (
@@ -46,8 +54,10 @@ Array
 )
 ```
 
-#### Pretty Decode
+### Pretty Decode
+
 PHPDoc
+
 ```PHP
 /**
 * Parse a raw decode call
@@ -62,11 +72,14 @@ PHPDoc
 ```
 
 Usage
+
 ```PHP
-$decode = amattu\NHTSA::decodeVIN("VIN_NUMBER");
-$pretty_decode = amattu\NHTSA::parseDecode($decode);
+$decode = amattu2\NHTSA\Client::decodeVIN("VIN_NUMBER");
+$pretty_decode = amattu2\NHTSA\Client::parseDecode($decode);
 ```
+
 Success return result (Example)
+
 ```PHP
 Array
 (
@@ -78,9 +91,12 @@ Array
 )
 ```
 
-### Recalls
-#### Raw Recalls
+## Recalls
+
+### Raw Recalls
+
 PHPDoc
+
 ```PHP
 /**
  * Get vehicle recalls by Year, Make, Model
@@ -96,11 +112,13 @@ PHPDoc
 ```
 
 Usage
+
 ```PHP
-$recalls = amattu\NHTSA::getRecalls(2015, "Ford", "Mustang");
+$recalls = amattu2\NHTSA\Client::getRecalls(2015, "Ford", "Mustang");
 ```
 
 Success return result
+
 ```
 Array
 (
@@ -122,8 +140,10 @@ Array
 )
 ```
 
-#### Pretty Recalls
+### Pretty Recalls
+
 PHPDoc
+
 ```PHP
 /**
  * Parse a raw recall result
@@ -137,12 +157,14 @@ PHPDoc
 ```
 
 Usage
+
 ```PHP
-$recalls = amattu\NHTSA::getRecalls(2015, "Ford", "Mustang");
-$pretty_recalls = amattu\NHTSA::parseRecalls($recalls);
+$recalls = amattu2\NHTSA\Client::getRecalls(2015, "Ford", "Mustang");
+$pretty_recalls = amattu2\NHTSA\Client::parseRecalls($recalls);
 ```
 
 Success return result
+
 ```
 Array
 (
@@ -162,8 +184,7 @@ Array
   ...
 )
 ```
-# Notes
-N/A
 
 # Requirements & Dependencies
+
 PHP 7.0 +
