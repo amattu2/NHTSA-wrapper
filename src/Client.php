@@ -20,16 +20,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace amattu2;
+namespace amattu2\NHTSA;
+
+use DateTime;
+use TypeError;
 
 /**
- * A https://vpic.nhtsa.dot.gov/api/ API access class
+ * A https://vpic.nhtsa.dot.gov/api/ API client
  */
-class NHTSA
+class Client
 {
   private static $endpoints = [
     "decode" => "https://vpic.nhtsa.dot.gov/api/vehicles/decodevin/%s?format=json",
-    "recalls" => "https://one.nhtsa.gov/webapi/api/Recalls/vehicle/modelyear/%d/make/%s/model/%s?format=json",
+    "recalls" => "https://api.nhtsa.gov/recalls/recallsByVehicle?modelYear=%d&make=%s&model=%s",
   ];
   private static $minimum_year = 1950;
   private static $minimum_make_length = 3;
@@ -60,9 +63,7 @@ class NHTSA
    * @param string vin number
    * @param int model year
    * @return array raw NHTSA result
-   * @throws \TypeError
-   * @author Alec M. <https://amattu.com>
-   * @date 2021-04-04T16:19:40-040
+   * @throws TypeError
    */
   public static function decodeVIN(string $vin, int $model_year = 0): ?array
   {
@@ -111,9 +112,7 @@ class NHTSA
    *
    * @param array raw decode result
    * @return ?array pretty parsed NHTSA result
-   * @throws \TypeError
-   * @author Alec M. <https://amattu.com>
-   * @date 2021-04-04T16:52:15-040
+   * @throws TypeError
    */
   public static function parseDecode(array $result = []): ?array
   {
@@ -159,9 +158,7 @@ class NHTSA
    * @param string make
    * @param string model
    * @return ?array NHTSA raw result
-   * @throws \TypeError
-   * @author Alec M. <https://amattu.com>
-   * @date 2021-04-04T16:48:24-040
+   * @throws TypeError
    */
   public static function getRecalls(int $model_year, string $make, string $model): ?array
   {
@@ -177,11 +174,11 @@ class NHTSA
     }
 
     // Fetch Recalls
-    $endpoint = sprintf(self::$endpoints["recalls"], $model_year, strtoupper($make), strtoupper($model));
+    $endpoint = sprintf(self::$endpoints["recalls"], $model_year, rawurlencode(strtoupper($make)), rawurlencode(strtoupper($model)));
     $result = json_decode(self::http_get($endpoint), true);
 
     // Return Result
-    return $result && isset($result["Count"]) && $result["Count"] > 0 ? $result["Results"] : null;
+    return $result && isset($result["Count"]) && $result["Count"] > 0 ? $result["results"] : null;
   }
 
   /**
@@ -189,9 +186,7 @@ class NHTSA
    *
    * @param array raw recall result
    * @return ?array parsed recall result
-   * @throws \TypeError
-   * @author Alec M. <https://amattu.com>
-   * @date 2021-04-04T18:16:26-040
+   * @throws TypeError
    */
   public static function parseRecalls(array $recalls = []): ?array
   {
@@ -237,23 +232,15 @@ class NHTSA
    * Parse Unix Timestamp (Miliseconds with offset)
    *
    * @param string unix timestamp
-   * @return \DateTime parsed representation
-   * @throws \TypeError
-   * @author Alec M. <https://amattu.com>
-   * @see https://stackoverflow.com/questions/16749778/php-date-format-date1365004652303-0500
-   * @date 2021-04-04T18:04:08-040
+   * @return Datetime parsed representation
+   * @throws TypeError
    */
-  private static function parse_timestamp(string $timestamp): \DateTime
+  private static function parse_timestamp(string $timestamp): DateTime
   {
-    try {
-      // Match Format
-      preg_match('/(\d{10})(\d{3})([\+\-]\d{4})/', $timestamp, $matches);
 
-      // Return
-      return \DateTime::createFromFormat("U.u.O", vsprintf('%2$s.%3$s.%4$s', $matches));
-    } catch (\Exception$e) {
-      return new \DateTime();
-    }
+    $parsed = DateTime::createFromFormat("d/m/Y", $timestamp);
+
+    return $parsed ?? new DateTime();
   }
 
   /**
@@ -261,9 +248,7 @@ class NHTSA
    *
    * @param array raw decode result
    * @return string Formatted Trim decode
-   * @throws \TypeError
-   * @author Alec M. <https://amattu.com>
-   * @date 2021-07-22T11:58:01-040
+   * @throws TypeError
    */
   private static function parse_trim(array $result): string
   {
@@ -320,9 +305,7 @@ class NHTSA
    *
    * @param array raw decode result
    * @return string Formatted Engine decode
-   * @throws \TypeError
-   * @author Alec M. <https://amattu.com>
-   * @date 2021-07-22T11:30:38-040
+   * @throws TypeError
    */
   private static function parse_engine(array $result): string
   {
@@ -439,9 +422,7 @@ class NHTSA
    *
    * @param string URL
    * @return ?string result body
-   * @throws \TypeError
-   * @author Alec M. <https://amattu.com>
-   * @date 2021-04-03T19:16:29-040
+   * @throws TypeError
    */
   private static function http_get(string $endpoint): ?string
   {

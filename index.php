@@ -20,32 +20,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-use amattu2\NHTSA;
 
 // Files
-require("src/NHTSA.php");
+require "vendor/autoload.php";
 
 // Optional VIN $_GET input
 $vin = isset($_GET['vin']) && !empty($_GET['vin']) ? $_GET['vin'] : "2B3KA43R86H389824";
 
 // Perform raw decode
-echo "<h1>Perform raw decode</h1>", "<pre>";
-$decode = NHTSA::decodeVIN($vin);
-print_r($decode);
-echo "</pre>";
+// echo "<h1>Perform raw decode</h1>", "<pre>";
+// $decode = amattu2\NHTSA\Client::decodeVIN($vin);
+// print_r($decode);
+// echo "</pre>";
 
 // Pretty decode + parse (Year, Make, Model, Trim, Engine)
-echo "<h1>Pretty parse a raw decode</h1>", "<pre>";
-print_r(NHTSA::parseDecode($decode));
-echo "</pre>";
+// echo "<h1>Pretty parse a raw decode</h1>", "<pre>";
+// print_r(amattu2\NHTSA\Client::parseDecode($decode));
+// echo "</pre>";
 
 // Fetch recalls
-//echo "<h1>Perform raw recall request</h1>", "<pre>";
-//$recalls = amattu\NHTSA::getRecalls(2015, "Ford", "Mustang");
-//print_r($recalls);
-//echo "</pre>";
+// echo "<h1>Perform raw recall request</h1>", "<pre>";
+// $recalls = amattu2\NHTSA\Client::getRecalls(2015, "Ford", "Mustang");
+// print_r($recalls);
+// echo "</pre>";
 
 // Pretty parse recalls
-//echo "<h1>Pretty parse raw recall request</h1>", "<pre>";
-//print_r(amattu\NHTSA::parseRecalls($recalls));
-//echo "</pre>";
+// echo "<h1>Pretty parse raw recall request</h1>", "<pre>";
+// print_r(amattu2\NHTSA\Client::parseRecalls($recalls));
+// echo "</pre>";
