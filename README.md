@@ -6,8 +6,14 @@ This is a simple VIN decoder wrapper for the [NHTSA (United States Department of
 
 ## Import
 
+Install with composer
+
+```bash
+require amattu2/nhtsa-wrapper
+```
+
 ```PHP
-require("classes/nhtsa.class.php");
+require "vendor/autoload.php";
 ```
 
 ## VIN Decode
