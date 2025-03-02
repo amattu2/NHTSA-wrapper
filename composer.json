@@ -14,5 +14,8 @@
             "email": "alecmattu1234@gmail.com"
         }
     ],
-    "require": {}
+    "require": {
+        "php": ">=7.4",
+        "ext-curl": "*"
+    }
 }

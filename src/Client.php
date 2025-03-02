@@ -33,7 +33,12 @@ class Client
   private static $endpoints = [
     "decode" => "https://vpic.nhtsa.dot.gov/api/vehicles/decodevin/%s?format=json",
     "recalls" => "https://api.nhtsa.gov/recalls/recallsByVehicle?modelYear=%d&make=%s&model=%s",
+    "GetModelsForMakeYear" => "https://vpic.nhtsa.dot.gov/api/vehicles/getmodelsformakeyear/make/%s/modelyear/%d?format=json",
+    "GetModelsForMakeIdYear" => "https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMakeIdYear/makeId/%d/modelyear/%d?format=json",
+    "GetModelsForMake" => "https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMake/%s?format=json",
+    "GetModelsForMakeId" => "https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMakeId/%d?format=json",
   ];
+
   private static $minimum_year = 1950;
   private static $minimum_make_length = 3;
   private static $minimum_model_length = 3;
@@ -226,6 +231,88 @@ class Client
 
     // Return
     return $parsed_result;
+  }
+
+  /**
+   * Get all available models for a make by year
+   *
+   * @note This is a free-text match. Recommend using `getModelsForMakeIdByYear`
+   * @param int $year The model year
+   * @param string $make The make
+   */
+  public static function getModelsForMakeByYear(int $year, string $make): ?array
+  {
+    if (!$year || $year < self::$minimum_year) {
+      return null;
+    }
+    if (!$make || strlen($make) < self::$minimum_make_length) {
+      return null;
+    }
+
+    // Fetch Data
+    $endpoint = sprintf(self::$endpoints["GetModelsForMakeYear"], rawurlencode(strtoupper($make)), $year);
+    $result = json_decode(self::http_get($endpoint), true);
+
+    return $result && isset($result["Count"]) && $result["Count"] > 0 ? $result["Results"] : null;
+  }
+
+  /**
+   * Get all available models for a make Id by year
+   *
+   * @param int $year The model year
+   * @param int $make_id The make id
+   */
+  public static function getModelsForMakeIdByYear(int $year, int $make_id): ?array
+  {
+    if (!$make_id) {
+      return null;
+    }
+    if (!$year || $year < self::$minimum_year) {
+      return null;
+    }
+
+    // Fetch Data
+    $endpoint = sprintf(self::$endpoints["GetModelsForMakeIdYear"], $make_id, $year);
+    $result = json_decode(self::http_get($endpoint), true);
+
+    return $result && isset($result["Count"]) && $result["Count"] > 0 ? $result["Results"] : null;
+  }
+
+  /**
+   * Get all available models for a make
+   *
+   * @note This is a free-text match. Recommend using `getModelsForMakeId`
+   * @param string $make
+   */
+  public static function GetModelsForMake(string $make): ?array
+  {
+    if (!$make || strlen($make) < self::$minimum_make_length) {
+      return null;
+    }
+
+    // Fetch Data
+    $endpoint = sprintf(self::$endpoints["GetModelsForMake"], rawurlencode(strtoupper($make)));
+    $result = json_decode(self::http_get($endpoint), true);
+
+    return $result && isset($result["Count"]) && $result["Count"] > 0 ? $result["Results"] : null;
+  }
+
+  /**
+   * Get all available models for a make Id
+   *
+   * @param int $make_id The make id
+   */
+  public static function GetModelsForMakeId(int $make_id): ?array
+  {
+    if (!$make_id) {
+      return null;
+    }
+
+    // Fetch Data
+    $endpoint = sprintf(self::$endpoints["GetModelsForMakeId"], $make_id);
+    $result = json_decode(self::http_get($endpoint), true);
+
+    return $result && isset($result["Count"]) && $result["Count"] > 0 ? $result["Results"] : null;
   }
 
   /**

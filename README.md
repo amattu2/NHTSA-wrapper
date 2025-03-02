@@ -43,7 +43,7 @@ $decode = amattu2\NHTSA\Client::decodeVIN("VIN_NUMBER");
 
 Success return result
 
-```
+```txt
 Array
 (
   [Error Text] =>
@@ -125,7 +125,7 @@ $recalls = amattu2\NHTSA\Client::getRecalls(2015, "Ford", "Mustang");
 
 Success return result
 
-```
+```txt
 Array
 (
   [0] => Array
@@ -171,7 +171,7 @@ $pretty_recalls = amattu2\NHTSA\Client::parseRecalls($recalls);
 
 Success return result
 
-```
+```txt
 Array
 (
   [2] => Array
@@ -191,6 +191,146 @@ Array
 )
 ```
 
+## getModelsForMakeByYear
+
+PHPDoc
+
+```PHP
+/**
+ * Get all available models for a make by year
+ *
+ * @note This is a free-text match. Recommend using `getModelsForMakeIdByYear`
+ * @param int $year The model year
+ * @param string $make The make
+ */
+```
+
+Usage
+
+```PHP
+$models = amattu2\NHTSA\Client::getModelsForMakeByYear(2015, "Ford");
+```
+
+Success return result
+
+```txt
+Array
+(
+  [0] => Array
+  (
+    [Make_ID] => 441
+    [Make_Name] => FORD
+    [Model_ID] => 2021
+    [Model_Name] => C-MAX
+  )
+  ...
+)
+```
+
+## getModelsForMakeIdByYear
+
+PHPDoc
+
+```PHP
+/**
+ * Get all available models for a make by year
+ *
+ * @param int $year The model year
+ * @param int $make_id The make ID
+ */
+```
+
+Usage
+
+```PHP
+$models = amattu2\NHTSA\Client::getModelsForMakeIdByYear(2015, 441);
+```
+
+Success return result
+
+```txt
+Array
+(
+  [0] => Array
+  (
+    [Make_ID] => 441
+    [Make_Name] => FORD
+    [Model_ID] => 2021
+    [Model_Name] => C-MAX
+  )
+  ...
+)
+```
+
+## getModelsForMake
+
+PHPDoc
+
+```PHP
+/**
+ * Get all available models for a make
+ *
+ * @param string $make The make
+ */
+```
+
+Usage
+
+```PHP
+$models = amattu2\NHTSA\Client::getModelsForMake("Ford");
+```
+
+Success return result
+
+```txt
+Array
+(
+  [0] => Array
+  (
+    [Make_ID] => 441
+    [Make_Name] => FORD
+    [Model_ID] => 2021
+    [Model_Name] => C-MAX
+  )
+  ...
+)
+```
+
+## getModelsForMakeId
+
+PHPDoc
+
+```PHP
+/**
+ * Get all available models for a make
+ *
+ * @param int $make_id The make ID
+ */
+```
+
+Usage
+
+```PHP
+$models = amattu2\NHTSA\Client::getModelsForMakeId(441);
+```
+
+Success return result
+
+```txt
+Array
+(
+  [0] => Array
+  (
+    [Make_ID] => 441
+    [Make_Name] => FORD
+    [Model_ID] => 2021
+    [Model_Name] => C-MAX
+  )
+  ...
+)
+```
+
 # Requirements & Dependencies
 
-PHP 7.0 +
+- PHP 7.4+
+- cURL Extension

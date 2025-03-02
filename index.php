@@ -20,12 +20,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 // Files
 require "vendor/autoload.php";
 
 // Optional VIN $_GET input
-$vin = isset($_GET['vin']) && !empty($_GET['vin']) ? $_GET['vin'] : "2B3KA43R86H389824";
+// $vin = isset($_GET['vin']) && !empty($_GET['vin']) ? $_GET['vin'] : "2B3KA43R86H389824";
 
 // Perform raw decode
 // echo "<h1>Perform raw decode</h1>", "<pre>";
@@ -47,4 +46,28 @@ $vin = isset($_GET['vin']) && !empty($_GET['vin']) ? $_GET['vin'] : "2B3KA43R86H
 // Pretty parse recalls
 // echo "<h1>Pretty parse raw recall request</h1>", "<pre>";
 // print_r(amattu2\NHTSA\Client::parseRecalls($recalls));
+// echo "</pre>";
+
+// getModelsForMakeByYear
+
+// echo "<h1>Get models for make by year</h1>", "<pre>";
+// print_r(amattu2\NHTSA\Client::getModelsForMakeByYear(2015, "Ford));
+// echo "</pre>";
+
+// getModelsForMakeIdByYear
+
+// echo "<h1>Get models for make by year</h1>", "<pre>";
+// print_r(amattu2\NHTSA\Client::getModelsForMakeIdByYear(2015, 460));
+// echo "</pre>";
+
+// getModelsForMake
+
+// echo "<h1>Get models for make</h1>", "<pre>";
+// print_r(amattu2\NHTSA\Client::getModelsForMake(make: "Tesla"));
+// echo "</pre>";
+
+// getModelsForMakeId
+
+// echo "<h1>Get models for make ID</h1>", "<pre>";
+// print_r(amattu2\NHTSA\Client::getModelsForMakeId(441));
 // echo "</pre>";
